@@ -1,6 +1,6 @@
 {
   "name": "@graphql-lab/backend",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -14,7 +14,7 @@
     "typescript": "^4.3.2"
   },
   "dependencies": {
-    "@graphql-lab/schema": "*",
+    "@graphql-lab/schema": "^0.0.1",
     "apollo-server": "^2.25.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
