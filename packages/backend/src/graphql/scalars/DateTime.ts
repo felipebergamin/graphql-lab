@@ -1,4 +1,5 @@
-const { GraphQLScalarType, Kind } = require('graphql');
+/* eslint-disable react/destructuring-assignment */
+import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 
 const dateScalar = new GraphQLScalarType({
   name: 'Date',
@@ -9,7 +10,7 @@ const dateScalar = new GraphQLScalarType({
   parseValue(value: string) {
     return new Date(value); // Convert incoming integer to Date
   },
-  parseLiteral(ast: any) {
+  parseLiteral(ast: ValueNode) {
     if (ast.kind === Kind.INT) {
       return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
     }

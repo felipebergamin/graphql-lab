@@ -1,35 +1,35 @@
 {
-   "name": "@graphql-lab/backend",
-   "version": "1.0.0",
-   "main": "index.js",
-   "license": "MIT",
-   "devDependencies": {
-      "@types/bcryptjs": "^2.4.2",
-      "@types/jsonwebtoken": "^8.5.2",
-      "@types/node": "^15.12.2",
-      "@types/uuid": "^8.3.0",
-      "nodemon": "^2.0.7",
-      "ts-node": "3.3.0",
-      "typescript": "^4.3.2"
-   },
-   "dependencies": {
-      "@graphql-lab/schema": "*",
-      "apollo-server": "^2.25.0",
-      "bcryptjs": "^2.4.3",
-      "dotenv": "^10.0.0",
-      "graphql": "^15.5.0",
-      "jsonwebtoken": "^8.5.1",
-      "pg": "^8.4.0",
-      "reflect-metadata": "^0.1.10",
-      "typeorm": "0.2.34",
-      "uuid": "^8.3.2"
-   },
-   "scripts": {
-      "migration:refresh": "yarn typeorm migration:revert && yarn typeorm migration:run",
-      "graphql:gen": "graphql-codegen --config codegen.yml",
-      "start:dev": "nodemon src/index.ts",
-      "build": "rm -rf dist/ && tsc",
-      "start": "ts-node src/index.ts",
-      "typeorm": "ts-node node_modules/.bin/typeorm"
-   }
+  "name": "@graphql-lab/backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.2",
+    "@types/node": "^15.12.2",
+    "@types/uuid": "^8.3.0",
+    "nodemon": "^2.0.7",
+    "ts-node": "3.3.0",
+    "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "@graphql-lab/schema": "*",
+    "apollo-server": "^2.25.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
+    "graphql": "^15.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.10",
+    "typeorm": "0.2.34",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "migration:refresh": "yarn typeorm migration:revert && yarn typeorm migration:run",
+    "graphql:gen": "graphql-codegen --config codegen.yml",
+    "start:dev": "nodemon src/index.ts",
+    "build": "rm -rf dist/ && tsc",
+    "start": "ts-node src/index.ts",
+    "typeorm": "ts-node node_modules/.bin/typeorm"
+  }
 }
