@@ -4,10 +4,13 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@graphql-lab/eslintconfig": "*"
+    "@graphql-lab/eslintconfig": "*",
+    "lerna": "^4.0.0"
   },
   "workspaces": {
-    "packages": ["packages/*"],
+    "packages": [
+      "packages/*"
+    ],
     "nohoist": [
       "**/typeorm/**",
       "**/typeorm"
