@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,27 +11,57 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
 };
+
+
+export type AuthenticationPayload = {
+  __typename?: 'AuthenticationPayload';
+  accessToken: Scalars['String'];
+  user: User;
+};
+
 
 export type Mutation = {
   __typename?: 'Mutation';
-  newTask: Task;
+  newUser: User;
+  authenticate: AuthenticationPayload;
 };
 
 
-export type MutationNewTaskArgs = {
-  description: Scalars['String'];
+export type MutationNewUserArgs = {
+  input: NewUserInput;
+};
+
+
+export type MutationAuthenticateArgs = {
+  input: SignInInput;
+};
+
+export type NewUserInput = {
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  email: Scalars['String'];
+  plainTextPassword: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  tasks: Array<Task>;
+  users: Array<User>;
 };
 
-export type Task = {
-  __typename?: 'Task';
+export type SignInInput = {
+  email: Scalars['String'];
+  plainTextPassword: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
   id: Scalars['ID'];
-  description: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 
@@ -112,42 +142,70 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Mutation: ResolverTypeWrapper<{}>;
+  AuthenticationPayload: ResolverTypeWrapper<AuthenticationPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Mutation: ResolverTypeWrapper<{}>;
+  NewUserInput: NewUserInput;
   Query: ResolverTypeWrapper<{}>;
-  Task: ResolverTypeWrapper<Task>;
+  SignInInput: SignInInput;
+  User: ResolverTypeWrapper<User>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Mutation: {};
+  AuthenticationPayload: AuthenticationPayload;
   String: Scalars['String'];
+  DateTime: Scalars['DateTime'];
+  Mutation: {};
+  NewUserInput: NewUserInput;
   Query: {};
-  Task: Task;
+  SignInInput: SignInInput;
+  User: User;
   ID: Scalars['ID'];
   Boolean: Scalars['Boolean'];
 };
 
+export type AuthDirectiveArgs = {  };
+
+export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AuthenticationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthenticationPayload'] = ResolversParentTypes['AuthenticationPayload']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  newTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationNewTaskArgs, 'description'>>;
+  newUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationNewUserArgs, 'input'>>;
+  authenticate?: Resolver<ResolversTypes['AuthenticationPayload'], ParentType, ContextType, RequireFields<MutationAuthenticateArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
-export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
+  AuthenticationPayload?: AuthenticationPayloadResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  Task?: TaskResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 
 
@@ -156,3 +214,13 @@ export type Resolvers<ContextType = any> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = any> = {
+  auth?: AuthDirectiveResolver<any, any, ContextType>;
+};
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;

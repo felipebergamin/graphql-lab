@@ -1,12 +1,37 @@
-type Task {
+directive @auth on OBJECT | FIELD_DEFINITION
+
+scalar DateTime
+
+type User {
   id: ID!
-  description: String!
+  firstName: String!
+  lastName: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Query {
-  tasks: [Task!]!
+  users: [User!]! @auth
+}
+
+input NewUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  plainTextPassword: String!
+}
+
+input SignInInput {
+  email: String!
+  plainTextPassword: String!
+}
+
+type AuthenticationPayload {
+  accessToken: String!
+  user: User!
 }
 
 type Mutation {
-  newTask(description: String!): Task!
+  newUser(input: NewUserInput!): User!
+  authenticate(input: SignInInput!): AuthenticationPayload!
 }
