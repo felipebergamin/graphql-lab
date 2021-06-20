@@ -1,53 +1,89 @@
-import { ApolloServer, gql } from "apollo-server";
+import 'dotenv/config';
+import { ApolloServer, gql, UserInputError } from "apollo-server";
 import schema from "@graphql-lab/schema";
-import { Resolvers, Task } from "@graphql-lab/schema/types";
-import { v1 } from "uuid";
+import { Resolvers } from "@graphql-lab/schema/types";
+import { sign,  verify } from 'jsonwebtoken';
+import {getRepository} from "typeorm";
 
-const tasks = [
-  {
-    id: v1(),
-    description: "Create a GraphQL Server",
-  },
-  {
-    id: v1(),
-    description: "Use graphql-code-generator",
-  },
-  {
-    id: v1(),
-    description: "Implement a client",
-  },
-];
+import "./db/connection";
+import DateTimeScalarType from "./graphql/scalars/DateTime";
+import {User as UserEntity} from './entity/User';
+import AuthDirective from "./graphql/directives/auth";
+import {JWT_SIGN_KEY} from './constants';
 
 const typeDefs = gql`
   ${schema}
 `;
 
 const resolvers: Resolvers = {
+  DateTime: DateTimeScalarType,
   Query: {
-    tasks: (root, args, ctx, info) => {
-      console.log({
-        root,
-        args,
-        ctx,
-        info,
-      });
-      return tasks;
-    },
+    users: () => {
+      const repository = getRepository(UserEntity);
+      return repository.find();
+    }
   },
   Mutation: {
-    newTask: (_, args): Task => {
-      const { description } = args;
-      const task: Task = {
-        id: v1(),
-        description,
-      };
-      tasks.push(task);
-      return task;
+    newUser: (parent, { input }) => {
+      console.log('input', input);
+      const repository = getRepository(UserEntity);
+      const user = repository.create(input);
+      user.plainTextPassword = input.plainTextPassword;
+      return repository.save(user);
     },
-  },
+    authenticate: async (parent, {input}) => {
+      const repository = getRepository(UserEntity);
+      const user = await repository.findOne({
+        where: { email: input.email },
+        select: ['password', 'id']
+      });
+
+      if (!user) throw new UserInputError('Invalid credentials');
+      const isValidCredentials = await user.checkPassword(input.plainTextPassword);
+      if (!isValidCredentials) {
+        throw new UserInputError('Invalid credentials');
+      }
+
+      const accessToken = sign({
+        iss: user.id,
+      }, JWT_SIGN_KEY);
+      const wholeUserData = await repository.findOneOrFail(user.id);
+
+      return {
+        accessToken,
+        user: wholeUserData,
+      }
+    }
+  }
 };
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async ({ req }) => {
+    try {
+      const authorization = req.header('authorization');
+      if (!authorization) return {};
+
+      const UserRepository = getRepository(UserEntity);
+      const [, token] = authorization.split(' ');
+      const { iss } = verify(token, JWT_SIGN_KEY) as any; // FIXME
+      const user = await UserRepository.findOne(iss);
+      return {
+        user,
+      };
+    } catch (err) {
+      // TODO: add Sentry or something similar
+      console.error(err);
+      return {};
+    }
+
+  },
+  schemaDirectives: {
+    auth: AuthDirective,
+  }
+});
+
 apolloServer.listen().then(({ url }) => {
   console.log("apollo server ready at " + url);
 });
