@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: passkeeper-db
+    environment:
+    - POSTGRES_PASSWORD=felipe123
+    - POSTGRES_DB=passkeeper
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    networks:
+    - app-database
+
+volumes:
+  postgres_data:
+
+networks:
+  app-database:
