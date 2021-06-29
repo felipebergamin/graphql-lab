@@ -1,15 +1,17 @@
+import 'reflect-metadata';
 import 'dotenv/config';
 import { ApolloServer, gql, UserInputError } from 'apollo-server';
 import schema from '@graphql-lab/schema';
 import { Resolvers } from '@graphql-lab/schema/types';
 import { sign, verify } from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 
 import './db/connection';
 import DateTimeScalarType from './graphql/scalars/DateTime';
 import { User as UserEntity } from './entity/User';
 import AuthDirective from './graphql/directives/auth';
 import { JWT_SIGN_KEY } from './constants';
+import UserRepository from './repositories/User';
 
 const typeDefs = gql`
   ${schema}
@@ -31,7 +33,7 @@ const resolvers: Resolvers = {
       return repository.save(user);
     },
     authenticate: async (parent, { input }) => {
-      const repository = getRepository(UserEntity);
+      const repository = getCustomRepository(UserRepository);
       const user = await repository.findOne({
         where: { email: input.email },
         select: ['password', 'id'],
@@ -69,10 +71,10 @@ const apolloServer = new ApolloServer({
       const authorization = req.header('authorization');
       if (!authorization) return {};
 
-      const UserRepository = getRepository(UserEntity);
+      const repository = getCustomRepository(UserRepository);
       const [, token] = authorization.split(' ');
       const { iss } = verify(token, JWT_SIGN_KEY) as { iss: string }; // FIXME
-      const user = await UserRepository.findOne(iss);
+      const user = await repository.findOne(iss);
       return {
         user,
       };
