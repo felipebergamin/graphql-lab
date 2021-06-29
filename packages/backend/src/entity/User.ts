@@ -28,8 +28,6 @@ export class User {
   @Column({ select: false })
   password!: string;
 
-  plainTextPassword!: string | undefined;
-
   @CreateDateColumn({
     type: 'timestamp with time zone',
   })
@@ -40,14 +38,19 @@ export class User {
   })
   updatedAt!: Date;
 
+  plainTextPassword!: string | undefined;
+
   @BeforeInsert()
   async hashPassword(): Promise<void> {
     if (!this.plainTextPassword) throw new Error('No password provided');
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
     this.password = await hash(this.plainTextPassword, 10);
   }
 
   @BeforeUpdate()
   async updatePassword(): Promise<void> {
+    this.updatedAt = new Date();
     if (this.plainTextPassword) {
       this.password = await hash(this.plainTextPassword, 10);
     }
