@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "graphql:gen": "lerna run graphql:gen --scope @graphql-lab/schema"
+  },
   "devDependencies": {
     "@graphql-lab/eslintconfig": "*",
     "lerna": "^4.0.0"
