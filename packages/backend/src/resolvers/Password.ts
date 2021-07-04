@@ -11,6 +11,14 @@ type Context = {
 
 const resolvers: Resolvers<Context> = {
   Mutation: {
+    deletePassword: async (parent, { id }, { user }) => {
+      const repository = getCustomRepository(PasswordRepository);
+      const deleteResult = await repository.delete({
+        userId: user.id,
+        id,
+      });
+      return !!deleteResult.affected;
+    },
     newPassword: (parent, { input }, context) => {
       const repository = getCustomRepository(PasswordRepository);
       const pwd = repository.create({
