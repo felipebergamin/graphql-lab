@@ -4,10 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert,
-  BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
-import { hash, compare } from 'bcryptjs';
+import { UserInputError } from 'apollo-server';
+import { hashSync, compare } from 'bcryptjs';
+
+import { Password } from './Password';
 
 @Entity({
   name: 'users',
@@ -22,7 +24,7 @@ export class User {
   @Column()
   lastName!: string;
 
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
   @Column({ select: false })
@@ -38,22 +40,12 @@ export class User {
   })
   updatedAt!: Date;
 
-  plainTextPassword!: string | undefined;
+  @OneToMany(() => Password, (password) => password.user)
+  passwords!: Password[];
 
-  @BeforeInsert()
-  async hashPassword(): Promise<void> {
-    if (!this.plainTextPassword) throw new Error('No password provided');
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-    this.password = await hash(this.plainTextPassword, 10);
-  }
-
-  @BeforeUpdate()
-  async updatePassword(): Promise<void> {
-    this.updatedAt = new Date();
-    if (this.plainTextPassword) {
-      this.password = await hash(this.plainTextPassword, 10);
-    }
+  receiveNewPlainTextPassword(password: string): void {
+    if (!password) throw new UserInputError('Invalid password');
+    this.password = hashSync(password);
   }
 
   checkPassword(plainPassword: string): Promise<boolean> {
