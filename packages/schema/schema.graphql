@@ -71,4 +71,5 @@ type Mutation {
 
 type Query {
   me: User! @auth
+  password(id: ID!): Password!
 }

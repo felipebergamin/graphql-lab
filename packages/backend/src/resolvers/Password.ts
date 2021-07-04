@@ -44,6 +44,17 @@ const resolvers: Resolvers<Context> = {
       return repository.save(password);
     },
   },
+  Query: {
+    password: (parent, { id }, { user }) => {
+      const repository = getCustomRepository(PasswordRepository);
+      return repository.findOneOrFail({
+        where: {
+          id,
+          userId: user.id,
+        },
+      });
+    },
+  },
 };
 
 export default resolvers;

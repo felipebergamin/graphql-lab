@@ -90,6 +90,12 @@ export type Password = {
 export type Query = {
   __typename?: 'Query';
   me: User;
+  password: Password;
+};
+
+
+export type QueryPasswordArgs = {
+  id: Scalars['ID'];
 };
 
 export type SignInInput = {
@@ -270,6 +276,7 @@ export type PasswordResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['Password'], ParentType, ContextType, RequireFields<QueryPasswordArgs, 'id'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
