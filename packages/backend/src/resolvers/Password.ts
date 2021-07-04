@@ -19,6 +19,17 @@ const resolvers: Resolvers<Context> = {
       });
       return repository.save(pwd);
     },
+    updatePassword: async (parent, { input }) => {
+      const repository = getCustomRepository(PasswordRepository);
+      const { id, ...data } = input;
+      const password = await repository.findOneOrFail(id);
+      if (data.password) password.password = data.password;
+      if (data.extraDescription)
+        password.extraDescription = data.extraDescription;
+      if (data.serviceName) password.serviceName = data.serviceName;
+      if (data.serviceUrl) password.serviceUrl = data.serviceUrl;
+      return repository.save(password);
+    },
   },
 };
 

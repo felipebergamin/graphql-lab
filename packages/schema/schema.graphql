@@ -52,11 +52,20 @@ input NewPasswordInput {
   password: String!
 }
 
+input UpdatePasswordInput {
+  id: ID!
+  serviceUrl: String
+  serviceName: String
+  extraDescription: String
+  password: String
+}
+
 type Mutation {
   newUser(input: NewUserInput!): User!
   authenticate(input: SignInInput!): AuthenticationPayload!
   updateProfile(input: UpdateUserInput!): User @auth
   newPassword(input: NewPasswordInput!): Password @auth
+  updatePassword(input: UpdatePasswordInput!): Password @auth
 }
 
 type Query {
