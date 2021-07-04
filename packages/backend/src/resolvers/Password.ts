@@ -27,10 +27,15 @@ const resolvers: Resolvers<Context> = {
       });
       return repository.save(pwd);
     },
-    updatePassword: async (parent, { input }) => {
+    updatePassword: async (parent, { input }, { user }) => {
       const repository = getCustomRepository(PasswordRepository);
       const { id, ...data } = input;
-      const password = await repository.findOneOrFail(id);
+      const password = await repository.findOneOrFail({
+        where: {
+          id,
+          userId: user.id,
+        },
+      });
       if (data.password) password.password = data.password;
       if (data.extraDescription)
         password.extraDescription = data.extraDescription;
