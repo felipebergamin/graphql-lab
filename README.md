@@ -28,12 +28,22 @@ The goal is not to create a 100% secure app, ready to real world. Just implement
 
 - [x] User authentication
 - [ ] User registration
-- [ ] User profile (edit info/delete account)
-- [ ] Passwords
-  - [ ] Create
-  - [ ] Read
-  - [ ] Update
-  - [ ] Delete
+- [ ] User profile
+  - [x] Update profile
+  - [ ] Delete account
+- [x] Passwords
+  - [x] Create
+  - [x] Read
+  - [x] Update
+  - [x] Delete (don't use soft delete)
+
+Authorization management:
+
+- [x] An user can only read, update and delete their own passwords
+  - [x] Read
+  - [x] List
+  - [x] Update
+  - [x] Delete
 
 ### Frontend (web)
 
