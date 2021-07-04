@@ -7,47 +7,34 @@ import {
   defaultFieldResolver,
 } from 'graphql';
 
-interface WrappedObjectType extends GraphQLObjectType {
-  _authFieldWrapped?: boolean;
-}
+import { User } from '../../entity/User';
 
-interface WrappedInterfaceType extends GraphQLInterfaceType {
-  _authFieldWrapped?: boolean;
-}
+type Context = {
+  user: User;
+};
 
 class AuthDirective extends SchemaDirectiveVisitor {
-  visitObject(object: GraphQLObjectType): GraphQLObjectType | void | null {
-    this.ensureFieldsWrapped(object);
-  }
+  private errorMessage = 'You need to be authenticated';
 
-  visitFieldDefinition(
-    field: GraphQLField<unknown, unknown>,
-    details: { objectType: GraphQLObjectType | GraphQLInterfaceType }
-  ): GraphQLField<unknown, unknown> | void | null {
-    this.ensureFieldsWrapped(details.objectType);
-  }
-
-  ensureFieldsWrapped(
-    objectType: WrappedObjectType | WrappedInterfaceType
-  ): void {
-    if (objectType._authFieldWrapped) return;
-    // eslint-disable-next-line no-param-reassign
-    objectType._authFieldWrapped = true;
-
-    const fields = objectType.getFields();
-    Object.keys(fields).forEach((fieldName) => {
-      const field = fields[fieldName];
-      const { resolve = defaultFieldResolver } = field;
-
-      field.resolve = async (...args) => {
-        const context = args[2];
-        const { user } = context;
-
-        if (!user)
-          throw new AuthenticationError('You need to be authenticated');
-        return resolve.apply(this, args);
-      };
+  public visitObject(object: GraphQLObjectType | GraphQLInterfaceType): void {
+    Object.values(object.getFields()).forEach((field) => {
+      this.visitFieldDefinition(field);
     });
+  }
+
+  public visitFieldDefinition(field: GraphQLField<unknown, Context>): void {
+    const { resolve = defaultFieldResolver } = field;
+    const { errorMessage } = this;
+
+    // eslint-disable-next-line no-param-reassign
+    field.resolve = function resolveField(...args): Promise<unknown> {
+      const { user } = args[2];
+      if (!user) {
+        throw new AuthenticationError(errorMessage);
+      }
+
+      return resolve.apply(this, args);
+    };
   }
 }
 
