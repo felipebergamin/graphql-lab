@@ -66,6 +66,7 @@ type Mutation {
   updateProfile(input: UpdateUserInput!): User @auth
   newPassword(input: NewPasswordInput!): Password @auth
   updatePassword(input: UpdatePasswordInput!): Password @auth
+  deletePassword(id: ID!): Boolean @auth
 }
 
 type Query {

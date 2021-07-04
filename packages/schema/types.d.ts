@@ -29,6 +29,7 @@ export type Mutation = {
   updateProfile?: Maybe<User>;
   newPassword?: Maybe<Password>;
   updatePassword?: Maybe<Password>;
+  deletePassword?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -54,6 +55,11 @@ export type MutationNewPasswordArgs = {
 
 export type MutationUpdatePasswordArgs = {
   input: UpdatePasswordInput;
+};
+
+
+export type MutationDeletePasswordArgs = {
+  id: Scalars['ID'];
 };
 
 export type NewPasswordInput = {
@@ -198,16 +204,16 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<{}>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   NewPasswordInput: NewPasswordInput;
   NewUserInput: NewUserInput;
   Password: ResolverTypeWrapper<Password>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   Query: ResolverTypeWrapper<{}>;
   SignInInput: SignInInput;
   UpdatePasswordInput: UpdatePasswordInput;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -216,16 +222,16 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   DateTime: Scalars['DateTime'];
   Mutation: {};
+  Boolean: Scalars['Boolean'];
+  ID: Scalars['ID'];
   NewPasswordInput: NewPasswordInput;
   NewUserInput: NewUserInput;
   Password: Password;
-  ID: Scalars['ID'];
   Query: {};
   SignInInput: SignInInput;
   UpdatePasswordInput: UpdatePasswordInput;
   UpdateUserInput: UpdateUserInput;
   User: User;
-  Boolean: Scalars['Boolean'];
 };
 
 export type AuthDirectiveArgs = {  };
@@ -248,6 +254,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   newPassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationNewPasswordArgs, 'input'>>;
   updatePassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'input'>>;
+  deletePassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeletePasswordArgs, 'id'>>;
 };
 
 export type PasswordResolvers<ContextType = any, ParentType extends ResolversParentTypes['Password'] = ResolversParentTypes['Password']> = {
