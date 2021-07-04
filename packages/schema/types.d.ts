@@ -28,6 +28,7 @@ export type Mutation = {
   authenticate: AuthenticationPayload;
   updateProfile?: Maybe<User>;
   newPassword?: Maybe<Password>;
+  updatePassword?: Maybe<Password>;
 };
 
 
@@ -48,6 +49,11 @@ export type MutationUpdateProfileArgs = {
 
 export type MutationNewPasswordArgs = {
   input: NewPasswordInput;
+};
+
+
+export type MutationUpdatePasswordArgs = {
+  input: UpdatePasswordInput;
 };
 
 export type NewPasswordInput = {
@@ -78,12 +84,19 @@ export type Password = {
 export type Query = {
   __typename?: 'Query';
   me: User;
-  passwords: Array<Password>;
 };
 
 export type SignInInput = {
   email: Scalars['String'];
   plainTextPassword: Scalars['String'];
+};
+
+export type UpdatePasswordInput = {
+  id: Scalars['ID'];
+  serviceUrl?: Maybe<Scalars['String']>;
+  serviceName?: Maybe<Scalars['String']>;
+  extraDescription?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserInput = {
@@ -191,6 +204,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Query: ResolverTypeWrapper<{}>;
   SignInInput: SignInInput;
+  UpdatePasswordInput: UpdatePasswordInput;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -208,6 +222,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Query: {};
   SignInInput: SignInInput;
+  UpdatePasswordInput: UpdatePasswordInput;
   UpdateUserInput: UpdateUserInput;
   User: User;
   Boolean: Scalars['Boolean'];
@@ -232,6 +247,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   authenticate?: Resolver<ResolversTypes['AuthenticationPayload'], ParentType, ContextType, RequireFields<MutationAuthenticateArgs, 'input'>>;
   updateProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   newPassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationNewPasswordArgs, 'input'>>;
+  updatePassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'input'>>;
 };
 
 export type PasswordResolvers<ContextType = any, ParentType extends ResolversParentTypes['Password'] = ResolversParentTypes['Password']> = {
@@ -247,7 +263,6 @@ export type PasswordResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  passwords?: Resolver<Array<ResolversTypes['Password']>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
