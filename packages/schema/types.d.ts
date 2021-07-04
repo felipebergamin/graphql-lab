@@ -26,6 +26,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   newUser: User;
   authenticate: AuthenticationPayload;
+  updateProfile?: Maybe<User>;
+  newPassword?: Maybe<Password>;
 };
 
 
@@ -38,6 +40,23 @@ export type MutationAuthenticateArgs = {
   input: SignInInput;
 };
 
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateUserInput;
+};
+
+
+export type MutationNewPasswordArgs = {
+  input: NewPasswordInput;
+};
+
+export type NewPasswordInput = {
+  serviceUrl: Scalars['String'];
+  serviceName: Scalars['String'];
+  extraDescription?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+};
+
 export type NewUserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -45,9 +64,21 @@ export type NewUserInput = {
   plainTextPassword: Scalars['String'];
 };
 
+export type Password = {
+  __typename?: 'Password';
+  id: Scalars['ID'];
+  serviceUrl: Scalars['String'];
+  serviceName: Scalars['String'];
+  extraDescription?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
+  me: User;
+  passwords: Array<Password>;
 };
 
 export type SignInInput = {
@@ -55,11 +86,19 @@ export type SignInInput = {
   plainTextPassword: Scalars['String'];
 };
 
+export type UpdateUserInput = {
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  plainTextPassword?: Maybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  passwords: Array<Maybe<Password>>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -146,11 +185,14 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<{}>;
+  NewPasswordInput: NewPasswordInput;
   NewUserInput: NewUserInput;
+  Password: ResolverTypeWrapper<Password>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Query: ResolverTypeWrapper<{}>;
   SignInInput: SignInInput;
+  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -160,11 +202,14 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   DateTime: Scalars['DateTime'];
   Mutation: {};
+  NewPasswordInput: NewPasswordInput;
   NewUserInput: NewUserInput;
+  Password: Password;
+  ID: Scalars['ID'];
   Query: {};
   SignInInput: SignInInput;
+  UpdateUserInput: UpdateUserInput;
   User: User;
-  ID: Scalars['ID'];
   Boolean: Scalars['Boolean'];
 };
 
@@ -185,16 +230,31 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   newUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationNewUserArgs, 'input'>>;
   authenticate?: Resolver<ResolversTypes['AuthenticationPayload'], ParentType, ContextType, RequireFields<MutationAuthenticateArgs, 'input'>>;
+  updateProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
+  newPassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationNewPasswordArgs, 'input'>>;
+};
+
+export type PasswordResolvers<ContextType = any, ParentType extends ResolversParentTypes['Password'] = ResolversParentTypes['Password']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  serviceUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  serviceName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  extraDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  passwords?: Resolver<Array<ResolversTypes['Password']>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  passwords?: Resolver<Array<Maybe<ResolversTypes['Password']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -204,6 +264,7 @@ export type Resolvers<ContextType = any> = {
   AuthenticationPayload?: AuthenticationPayloadResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
+  Password?: PasswordResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

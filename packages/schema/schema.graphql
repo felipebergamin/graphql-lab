@@ -2,16 +2,23 @@ directive @auth on OBJECT | FIELD_DEFINITION
 
 scalar DateTime
 
-type User {
+type Password {
   id: ID!
-  firstName: String!
-  lastName: String!
+  serviceUrl: String!
+  serviceName: String!
+  extraDescription: String
+  password: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type Query {
-  users: [User!]! @auth
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  passwords: [Password]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input NewUserInput {
@@ -19,6 +26,13 @@ input NewUserInput {
   lastName: String!
   email: String!
   plainTextPassword: String!
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  email: String
+  plainTextPassword: String
 }
 
 input SignInInput {
@@ -31,7 +45,20 @@ type AuthenticationPayload {
   user: User!
 }
 
+input NewPasswordInput {
+  serviceUrl: String!
+  serviceName: String!
+  extraDescription: String
+  password: String!
+}
+
 type Mutation {
   newUser(input: NewUserInput!): User!
   authenticate(input: SignInInput!): AuthenticationPayload!
+  updateProfile(input: UpdateUserInput!): User @auth
+  newPassword(input: NewPasswordInput!): Password @auth
+}
+
+type Query {
+  me: User! @auth
 }
