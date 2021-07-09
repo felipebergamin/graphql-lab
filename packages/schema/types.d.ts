@@ -24,16 +24,17 @@ export type AuthenticationPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  newUser: User;
+  registerUser: User;
   authenticate: AuthenticationPayload;
   updateProfile?: Maybe<User>;
   newPassword?: Maybe<Password>;
   updatePassword?: Maybe<Password>;
   deletePassword?: Maybe<Scalars['Boolean']>;
+  deleteAccount?: Maybe<Scalars['Boolean']>;
 };
 
 
-export type MutationNewUserArgs = {
+export type MutationRegisterUserArgs = {
   input: NewUserInput;
 };
 
@@ -123,6 +124,7 @@ export type User = {
   id: Scalars['ID'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  email: Scalars['String'];
   passwords: Array<Maybe<Password>>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -255,12 +257,13 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  newUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationNewUserArgs, 'input'>>;
+  registerUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'input'>>;
   authenticate?: Resolver<ResolversTypes['AuthenticationPayload'], ParentType, ContextType, RequireFields<MutationAuthenticateArgs, 'input'>>;
   updateProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   newPassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationNewPasswordArgs, 'input'>>;
   updatePassword?: Resolver<Maybe<ResolversTypes['Password']>, ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'input'>>;
   deletePassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeletePasswordArgs, 'id'>>;
+  deleteAccount?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
 };
 
 export type PasswordResolvers<ContextType = any, ParentType extends ResolversParentTypes['Password'] = ResolversParentTypes['Password']> = {
@@ -283,6 +286,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   passwords?: Resolver<Array<Maybe<ResolversTypes['Password']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
