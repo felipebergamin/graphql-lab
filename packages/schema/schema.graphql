@@ -16,6 +16,7 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  email: String!
   passwords: [Password]!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -61,12 +62,13 @@ input UpdatePasswordInput {
 }
 
 type Mutation {
-  newUser(input: NewUserInput!): User!
+  registerUser(input: NewUserInput!): User!
   authenticate(input: SignInInput!): AuthenticationPayload!
   updateProfile(input: UpdateUserInput!): User @auth
   newPassword(input: NewPasswordInput!): Password @auth
   updatePassword(input: UpdatePasswordInput!): Password @auth
   deletePassword(id: ID!): Boolean @auth
+  deleteAccount: Boolean @auth
 }
 
 type Query {

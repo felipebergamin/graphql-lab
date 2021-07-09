@@ -1,9 +1,11 @@
 import { Resolvers } from '@graphql-lab/schema/types';
 import { getCustomRepository } from 'typeorm';
+import { AuthenticationError } from 'apollo-server';
 
 import UserRepository from '../repositories/User';
+import type { ApolloContext } from '../types';
 
-const UserResolvers: Resolvers = {
+const UserResolvers: Resolvers<ApolloContext> = {
   User: {
     passwords: (parent) => {
       return parent.passwords;
@@ -18,13 +20,13 @@ const UserResolvers: Resolvers = {
     },
   },
   Mutation: {
-    newUser: (parent, { input }) => {
+    registerUser: (parent, { input }) => {
       const repository = getCustomRepository(UserRepository);
       const user = repository.create(input);
       user.receiveNewPlainTextPassword(input.plainTextPassword);
       return repository.save(user);
     },
-    updateProfile: async (parent, { input }, context, info) => {
+    updateProfile: async (parent, { input }, context) => {
       const repository = getCustomRepository(UserRepository);
       const user = await repository.findOneOrFail(context.user.id);
       const { email, plainTextPassword, firstName, lastName } = input;
@@ -35,6 +37,14 @@ const UserResolvers: Resolvers = {
       if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName;
       return repository.save(user);
+    },
+    deleteAccount: async (parent, args, { user }) => {
+      if (!user) throw new AuthenticationError('You are not signed in');
+      const repository = getCustomRepository(UserRepository);
+      const { affected } = await repository.delete({
+        id: user.id,
+      });
+      return !!affected;
     },
   },
 };
