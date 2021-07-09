@@ -27,10 +27,10 @@ The goal is not to create a 100% secure app, ready to real world. Just implement
 ### Backend:
 
 - [x] User authentication
-- [ ] User registration
-- [ ] User profile
+- [x] User registration
+- [x] User profile
   - [x] Update profile
-  - [ ] Delete account
+  - [x] Delete account
 - [x] Passwords
   - [x] Create
   - [x] Read
